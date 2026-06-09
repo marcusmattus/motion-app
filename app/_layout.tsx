@@ -12,12 +12,18 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   useEffect(() => {
-    // Hide splash screen after a brief delay
     const timer = setTimeout(() => {
       SplashScreen.hideAsync();
     }, 500);
     return () => clearTimeout(timer);
   }, []);
+
+  const headerDefaults = {
+    headerStyle: { backgroundColor: colors.background },
+    headerTintColor: colors.terminalGreen,
+    headerTitleStyle: { fontFamily: 'SpaceMono', fontSize: 13, letterSpacing: 2 } as any,
+    headerShown: true,
+  };
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -32,13 +38,40 @@ export default function RootLayout() {
         <Stack.Screen name="index" />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-        <Stack.Screen name="nutrition/index" options={{ title: 'Fuel Scan', headerShown: true, headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary }} />
-        <Stack.Screen name="forge/index" options={{ title: 'Forge', headerShown: true, headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary }} />
-        <Stack.Screen name="forge/run" options={{ title: 'Run Mission', headerShown: true, headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary }} />
-        <Stack.Screen name="forge/camera" options={{ title: 'Active Motion', headerShown: true, headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary }} />
-        <Stack.Screen name="progress/index" options={{ title: 'The Mirror', headerShown: true, headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary }} />
-        <Stack.Screen name="debrief/index" options={{ title: 'Debrief', headerShown: true, headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary }} />
+        <Stack.Screen
+          name="nutrition/index"
+          options={{ ...headerDefaults, title: '> FUEL_SCAN' }}
+        />
+        <Stack.Screen
+          name="forge/index"
+          options={{ ...headerDefaults, title: '> FORGE' }}
+        />
+        <Stack.Screen
+          name="forge/run"
+          options={{ ...headerDefaults, title: '> RUN_MISSION' }}
+        />
+        <Stack.Screen
+          name="forge/camera"
+          options={{ ...headerDefaults, title: '> ACTIVE_MOTION' }}
+        />
+        <Stack.Screen
+          name="forge/session"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="forge/model"
+          options={{ ...headerDefaults, title: '> TRACKING_CONFIG' }}
+        />
+        <Stack.Screen
+          name="progress/index"
+          options={{ ...headerDefaults, title: '> THE_MIRROR' }}
+        />
+        <Stack.Screen
+          name="debrief/index"
+          options={{ ...headerDefaults, title: '> SESSION_DEBRIEF' }}
+        />
       </Stack>
     </QueryClientProvider>
   );
 }
+
