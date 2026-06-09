@@ -1,0 +1,32 @@
+# Triggers the EAS "Create Production Builds" workflow (.eas/workflows/) on
+# Expo's cloud. Manual-only by default so a build is never kicked off by an
+# ordinary push. Requires an EXPO_TOKEN repo secret:
+#   Settings → Secrets and variables → Actions → New repository secret
+#   (generate the token at expo.dev → Account Settings → Access Tokens)
+name: EAS Production Build
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    name: Trigger EAS production builds
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Set up EAS CLI
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Run EAS workflow
+        run: eas workflow:run create-production-builds.yml
