@@ -11,12 +11,16 @@ export default function TabLayout() {
         headerShown: true,
         headerStyle: {
           backgroundColor: colors.background,
+          borderBottomWidth: 1,
+          borderBottomColor: colors.terminalBorder,
         },
         headerTitleStyle: {
-          color: colors.textPrimary,
-          fontWeight: 'bold',
+          color: colors.terminalGreen,
+          fontFamily: 'SpaceMono',
+          fontSize: 14,
+          letterSpacing: 2,
         },
-        headerTintColor: colors.textPrimary,
+        headerTintColor: colors.terminalGreen,
         tabBarStyle: {
           backgroundColor: tabBarTheme.backgroundColor,
           borderTopColor: tabBarTheme.borderTopColor,
@@ -28,8 +32,10 @@ export default function TabLayout() {
         tabBarActiveTintColor: tabBarTheme.activeTintColor,
         tabBarInactiveTintColor: tabBarTheme.inactiveTintColor,
         tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: '500',
+          fontFamily: 'SpaceMono',
+          fontSize: 9,
+          letterSpacing: 1,
+          textTransform: 'uppercase',
         },
         tabBarIcon: ({ focused, color, size }) => {
           const icons = tabIcons[route.name as TabName];
@@ -44,41 +50,40 @@ export default function TabLayout() {
         },
       })}
     >
+      {/* PRIMARY — Camera is first tab */}
       <Tabs.Screen
-        name="today"
+        name="camera"
         options={{
-          title: 'Today',
-          headerTitle: 'Motion',
+          title: 'CAMERA',
+          headerTitle: 'MOTION/TRACK',
+          headerShown: false, // full-screen camera
         }}
       />
       <Tabs.Screen
-        name="progress"
+        name="analytics"
         options={{
-          title: 'Progress',
-          headerTitle: 'Your Progress',
-        }}
-      />
-      <Tabs.Screen
-        name="social"
-        options={{
-          title: 'Social',
-          headerTitle: 'Community',
+          title: 'DATA',
+          headerTitle: '> ANALYTICS',
         }}
       />
       <Tabs.Screen
         name="coach"
         options={{
-          title: 'Coach',
-          headerTitle: 'AI Coach',
+          title: 'COACH',
+          headerTitle: '> AI_COACH',
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
-          title: 'Settings',
-          headerTitle: 'Settings',
+          title: 'CONFIG',
+          headerTitle: '> SETTINGS',
         }}
       />
+      {/* Hidden legacy tabs — kept to avoid broken routes */}
+      <Tabs.Screen name="today" options={{ href: null }} />
+      <Tabs.Screen name="progress" options={{ href: null }} />
+      <Tabs.Screen name="social" options={{ href: null }} />
     </Tabs>
   );
 }
