@@ -5,6 +5,9 @@
 
 import { Keypoint } from './poseDetector';
 
+/** Minimum delta (degrees) below which L/R difference is considered balanced */
+const BALANCE_THRESHOLD_DEGREES = 5;
+
 type LimbPair = {
   label: string;
   left: [string, string, string]; // [jointA, vertex, jointB]
@@ -75,7 +78,7 @@ export function analyzeSymmetry(keypoints: Keypoint[]): SymmetryResult {
     const delta = Math.abs(leftAngle - rightAngle);
     const score = Math.max(0, Math.round(100 - delta * 1.5));
     const dominant =
-      delta < 5 ? 'balanced' : leftAngle < rightAngle ? 'left' : 'right';
+      delta < BALANCE_THRESHOLD_DEGREES ? 'balanced' : leftAngle < rightAngle ? 'left' : 'right';
 
     pairs.push({ label: pair.label, leftAngle, rightAngle, delta, score, dominant });
   }

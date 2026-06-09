@@ -38,7 +38,11 @@ const KEYPOINT_NAMES = [
   'left_knee', 'right_knee', 'left_ankle', 'right_ankle',
 ];
 
-// Simulated idle keypoints representing a standing person (centered frame)
+/**
+ * Simulated pose jitter magnitude — approximates realistic MoveNet coordinate
+ * noise during UI development before the native TF backend is set up.
+ */
+const MOCK_NOISE_MAGNITUDE = 0.015;
 const STANDING_POSE: Array<[number, number]> = [
   [0.50, 0.10], // nose
   [0.48, 0.09], // left_eye
@@ -86,7 +90,7 @@ export function updatePoseDetectorConfig(updates: Partial<ModelConfig>): void {
 export async function detectPose(_frameData?: unknown): Promise<PoseResult | null> {
   if (!_initialized) return null;
 
-  const noise = () => (Math.random() - 0.5) * 0.015;
+  const noise = () => (Math.random() - 0.5) * MOCK_NOISE_MAGNITUDE;
   const keypoints: Keypoint[] = KEYPOINT_NAMES.map((name, i) => {
     const [bx, by] = STANDING_POSE[i];
     const score = 0.65 + Math.random() * 0.35;

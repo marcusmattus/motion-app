@@ -21,6 +21,7 @@ import { initPoseDetector, detectPose } from '../../src/vision/poseDetector';
 import { processRepFrame, ExerciseId, EXERCISES } from '../../src/vision/repCounter';
 import { scoreForm } from '../../src/vision/formScorer';
 import { analyzeSymmetry } from '../../src/vision/symmetryAnalyzer';
+import { DETECTION_INTERVAL_MS } from '../../src/vision/config';
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 
@@ -119,7 +120,7 @@ export default function SessionScreen() {
           ]),
         ]).start();
       }
-    }, 500);
+    }, DETECTION_INTERVAL_MS);
   }, [exercise, repFlash, repScale, setLiveReps, setLiveFormScore, setLiveSymmetryScore, setLiveTempo]);
 
   const endSet = useCallback(() => {

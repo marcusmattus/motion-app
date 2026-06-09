@@ -13,6 +13,9 @@ export type ExerciseId =
   | 'DEADLIFT'
   | 'LUNGE';
 
+/** Maximum number of recent rep tempos to keep for the rolling average */
+const MAX_TEMPO_HISTORY = 10;
+
 type AngleConfig = {
   jointA: string;
   vertex: string;
@@ -133,7 +136,7 @@ export function processRepFrame(
     const now = Date.now();
     if (state.lastRepTime > 0) {
       state.tempos.push((now - state.lastRepTime) / 1000);
-      if (state.tempos.length > 10) state.tempos.shift();
+      if (state.tempos.length > MAX_TEMPO_HISTORY) state.tempos.shift();
     }
     state.lastRepTime = now;
   }

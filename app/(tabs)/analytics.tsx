@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -55,9 +55,10 @@ export default function AnalyticsTab() {
   const [period, setPeriod] = useState('WEEK');
   const { sessions, liveReps, liveFormScore, liveSymmetryScore } = useMotionStore();
 
-  const volumeData = mockVolumeData();
-  const formTrend = mockFormTrend();
-  const symmetryData = mockSymmetry();
+  // Memoize mock chart data so it doesn't regenerate on every render
+  const volumeData = useMemo(() => mockVolumeData(), [period]);
+  const formTrend = useMemo(() => mockFormTrend(), [period]);
+  const symmetryData = useMemo(() => mockSymmetry(), [period]);
 
   const maxVolume = Math.max(...volumeData.map((d) => d.kg));
   const totalReps = sessions.reduce((s, ses) => s + ses.totalReps, 0) + liveReps;

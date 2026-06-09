@@ -80,6 +80,14 @@ const FORM_RULES: Record<ExerciseId, FormRule> = {
   },
 };
 
+/**
+ * Weights for the form score formula.
+ * joint_coverage: fraction of required joints visible above confidence threshold.
+ * confidence: average keypoint confidence among visible required joints.
+ */
+const JOINT_COVERAGE_WEIGHT = 0.6;
+const CONFIDENCE_WEIGHT = 0.4;
+
 export type FormScore = {
   score: number;          // 0–100
   visibleJoints: number;
@@ -116,7 +124,7 @@ export function scoreForm(keypoints: Keypoint[], exercise: ExerciseId): FormScor
   const jointCoverage = trackedJoints / rules.requiredJoints.length;
   const avgConfidence = trackedJoints > 0 ? totalConfidence / trackedJoints : 0;
 
-  const score = Math.round(jointCoverage * 0.6 * 100 + avgConfidence * 0.4 * 100);
+  const score = Math.round(jointCoverage * JOINT_COVERAGE_WEIGHT * 100 + avgConfidence * CONFIDENCE_WEIGHT * 100);
 
   const feedback =
     score >= 90

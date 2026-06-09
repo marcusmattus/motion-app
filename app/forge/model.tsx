@@ -25,6 +25,7 @@ export default function ModelConfigScreen() {
   const [showAngles, setShowAngles] = useState(cfg.showAngles);
   const [showConfidence, setShowConfidence] = useState(cfg.showConfidence);
   const [showScanlines, setShowScanlines] = useState(cfg.showScanlines);
+  // TODO: persist heatmap_mode to trackingConfig once backend heatmap rendering is implemented
   const [heatmap, setHeatmap] = useState<'MUSCLE' | 'JOINT'>('MUSCLE');
   const [isDirty, setIsDirty] = useState(false);
 

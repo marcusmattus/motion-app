@@ -90,6 +90,9 @@ export interface MotionState {
   resetLiveSession: () => void;
 }
 
+/** Maximum number of sessions retained in local history */
+const MAX_SESSION_HISTORY = 50;
+
 const DEFAULT_TRACKING_CONFIG: TrackingConfig = {
   modelConfig: {
     modelType: 'MoveNet_Thunder',
@@ -140,7 +143,7 @@ export const useMotionStore = create<MotionState>()(
       // Sessions
       sessions: [],
       addSession: (session) =>
-        set((state) => ({ sessions: [session, ...state.sessions].slice(0, 50) })),
+        set((state) => ({ sessions: [session, ...state.sessions].slice(0, MAX_SESSION_HISTORY) })),
       clearSessions: () => set({ sessions: [] }),
 
       // Live session
