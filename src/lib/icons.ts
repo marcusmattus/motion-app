@@ -1,22 +1,18 @@
-// Motion Tab Icons Configuration
+// Motion Tab Icons Configuration — Terminal Design
 export const tabIcons = {
-  Today: {
-    active: 'calendar-check',
-    inactive: 'calendar-check-outline',
+  camera: {
+    active: 'camera',
+    inactive: 'camera-outline',
   },
-  Progress: {
-    active: 'chart-line',
-    inactive: 'trending-up',
+  analytics: {
+    active: 'chart-bar',
+    inactive: 'chart-bar',
   },
-  Social: {
-    active: 'account-group',
-    inactive: 'account-group-outline',
-  },
-  Coach: {
+  coach: {
     active: 'dumbbell',
     inactive: 'human-male-fitness',
   },
-  Settings: {
+  settings: {
     active: 'cog',
     inactive: 'cog-outline',
   },

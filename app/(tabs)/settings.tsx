@@ -2,241 +2,185 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, Pressable, Switch, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { MotionCard } from '../../src/components/MotionCard';
-import { MotionButton } from '../../src/components/MotionButton';
-import { colors, spacing, radius } from '../../src/lib/theme';
+import { colors, spacing } from '../../src/lib/theme';
+import { TerminalCard } from '../../src/components/TerminalCard';
+import { TerminalText } from '../../src/components/TerminalText';
 import { useMotionStore } from '../../src/state/store';
-
-interface SettingItem {
-  id: string;
-  icon: string;
-  label: string;
-  value?: string;
-  type: 'navigate' | 'toggle' | 'action';
-  dangerous?: boolean;
-}
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const { user, setUser, setOnboardingComplete } = useMotionStore();
+  const { user, setUser, setOnboardingComplete, trackingConfig, updateTrackingConfig, clearSessions } =
+    useMotionStore();
+
   const [notifications, setNotifications] = useState(true);
   const [haptics, setHaptics] = useState(true);
-  const [darkMode, setDarkMode] = useState(true);
-  const [serverPose, setServerPose] = useState(false);
+  const [cursorBlink, setCursorBlink] = useState(true);
 
   const handleLogout = () => {
-    Alert.alert(
-      'Sign Out',
-      'Are you sure you want to sign out?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Sign Out',
-          style: 'destructive',
-          onPress: () => {
-            setUser(null);
-            setOnboardingComplete(false);
-            router.replace('/');
-          },
+    Alert.alert('[CONFIRM_SIGNOUT]', 'Sign out of current session?', [
+      { text: '> CANCEL', style: 'cancel' },
+      {
+        text: '> CONFIRM',
+        style: 'destructive',
+        onPress: () => {
+          setUser(null);
+          setOnboardingComplete(false);
+          router.replace('/');
         },
-      ]
-    );
+      },
+    ]);
   };
 
-  const handleResetOnboarding = () => {
-    Alert.alert(
-      'Reset Onboarding',
-      'This will show the welcome tutorial again on next launch.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Reset',
-          onPress: () => {
-            setOnboardingComplete(false);
-            Alert.alert('Done', 'Onboarding will show on next app launch.');
-          },
-        },
-      ]
-    );
-  };
+  const ConfigSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
+    <TerminalCard title={title} style={styles.section}>
+      {children}
+    </TerminalCard>
+  );
 
-  const accountSettings: SettingItem[] = [
-    { id: 'profile', icon: 'account-circle', label: 'Edit Profile', type: 'navigate' },
-    { id: 'units', icon: 'scale', label: 'Units', value: user?.unitSystem || 'metric', type: 'navigate' },
-    { id: 'avatar', icon: 'human', label: 'Recalibrate Avatar', type: 'navigate' },
-  ];
-
-  const appSettings: SettingItem[] = [
-    { id: 'notifications', icon: 'bell', label: 'Notifications', type: 'toggle' },
-    { id: 'haptics', icon: 'vibrate', label: 'Haptic Feedback', type: 'toggle' },
-    { id: 'dark', icon: 'moon-waning-crescent', label: 'Dark Mode', type: 'toggle' },
-  ];
-
-  const coachSettings: SettingItem[] = [
-    { id: 'camera', icon: 'camera', label: 'Camera Position Guide', type: 'navigate' },
-    { id: 'server', icon: 'cloud-upload', label: 'Server-side Pose Analysis', type: 'toggle' },
-    { id: 'rules', icon: 'clipboard-list', label: 'Form Rules', type: 'navigate' },
-  ];
-
-  const dataSettings: SettingItem[] = [
-    { id: 'export', icon: 'download', label: 'Export Data', type: 'action' },
-    { id: 'privacy', icon: 'shield-lock', label: 'Privacy Policy', type: 'navigate' },
-    { id: 'reset', icon: 'refresh', label: 'Reset Onboarding', type: 'action' },
-    { id: 'delete', icon: 'delete', label: 'Delete Account', type: 'action', dangerous: true },
-  ];
-
-  const getToggleValue = (id: string) => {
-    switch (id) {
-      case 'notifications': return notifications;
-      case 'haptics': return haptics;
-      case 'dark': return darkMode;
-      case 'server': return serverPose;
-      default: return false;
-    }
-  };
-
-  const handleToggle = (id: string) => {
-    switch (id) {
-      case 'notifications': setNotifications(!notifications); break;
-      case 'haptics': setHaptics(!haptics); break;
-      case 'dark': setDarkMode(!darkMode); break;
-      case 'server': setServerPose(!serverPose); break;
-    }
-  };
-
-  const handleAction = (id: string) => {
-    switch (id) {
-      case 'export':
-        Alert.alert('Export', 'Your data export will be prepared and emailed to you.');
-        break;
-      case 'reset':
-        handleResetOnboarding();
-        break;
-      case 'delete':
-        Alert.alert(
-          'Delete Account',
-          'This action cannot be undone. All your data will be permanently deleted.',
-          [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Delete', style: 'destructive', onPress: () => {} },
-          ]
-        );
-        break;
-    }
-  };
-
-  const renderSettingItem = (item: SettingItem) => (
-    <Pressable
-      key={item.id}
-      style={styles.settingRow}
-      onPress={() => {
-        if (item.type === 'navigate') {
-          // Navigate to detail screen
-        } else if (item.type === 'action') {
-          handleAction(item.id);
-        }
-      }}
-    >
-      <View style={[styles.settingIcon, item.dangerous && styles.settingIconDanger]}>
-        <Icon
-          name={item.icon}
-          size={20}
-          color={item.dangerous ? colors.danger : colors.primary}
-        />
-      </View>
-      <Text style={[styles.settingLabel, item.dangerous && styles.settingLabelDanger]}>
-        {item.label}
-      </Text>
-      {item.type === 'toggle' ? (
-        <Switch
-          value={getToggleValue(item.id)}
-          onValueChange={() => handleToggle(item.id)}
-          trackColor={{ false: colors.surface, true: colors.primary }}
-          thumbColor={colors.textPrimary}
-        />
-      ) : item.value ? (
-        <View style={styles.settingValueContainer}>
-          <Text style={styles.settingValue}>{item.value}</Text>
-          <Icon name="chevron-right" size={20} color={colors.textSecondary} />
-        </View>
-      ) : (
-        <Icon name="chevron-right" size={20} color={colors.textSecondary} />
+  const ConfigRow = ({
+    label,
+    value,
+    onPress,
+    isDanger,
+    children,
+  }: {
+    label: string;
+    value?: string;
+    onPress?: () => void;
+    isDanger?: boolean;
+    children?: React.ReactNode;
+  }) => (
+    <Pressable style={styles.row} onPress={onPress} disabled={!onPress && !children}>
+      <Text style={[styles.rowLabel, isDanger && styles.dangerText]}>{label}</Text>
+      {value && <Text style={[styles.rowValue, isDanger && styles.dangerText]}>{value}</Text>}
+      {children}
+      {onPress && !children && (
+        <Text style={styles.chevron}>›</Text>
       )}
     </Pressable>
   );
 
+  const ToggleRow = ({
+    label,
+    value,
+    onChange,
+    isDanger,
+  }: {
+    label: string;
+    value: boolean;
+    onChange: (v: boolean) => void;
+    isDanger?: boolean;
+  }) => (
+    <ConfigRow label={label} isDanger={isDanger}>
+      <View style={styles.rowRight}>
+        <Text style={[styles.toggleValue, { color: value ? colors.terminalGreen : colors.textMuted }]}>
+          {value ? 'ON' : 'OFF'}
+        </Text>
+        <Switch
+          value={value}
+          onValueChange={onChange}
+          trackColor={{ false: colors.surface, true: colors.terminalGreen }}
+          thumbColor={value ? colors.terminalGreen : colors.textMuted}
+        />
+      </View>
+    </ConfigRow>
+  );
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* User Card */}
-      <MotionCard style={styles.userCard}>
-        <View style={styles.userAvatar}>
-          <Text style={styles.userAvatarText}>
-            {user?.displayName?.[0] || 'U'}
-          </Text>
+      {/* User info */}
+      <TerminalCard style={styles.userCard}>
+        <View style={styles.userRow}>
+          <View style={styles.userAvatar}>
+            <Text style={styles.userAvatarText}>{user?.displayName?.[0]?.toUpperCase() ?? 'U'}</Text>
+          </View>
+          <View style={styles.userInfo}>
+            <Text style={styles.userName}>{user?.displayName ?? 'MOTION_USER'}</Text>
+            <TerminalText mono color={colors.textMuted} style={styles.userStatus}>
+              {'> SYSTEM READY'}
+            </TerminalText>
+          </View>
+          <Pressable style={styles.editBtn}>
+            <Icon name="pencil-outline" size={18} color={colors.textMuted} />
+          </Pressable>
         </View>
-        <View style={styles.userInfo}>
-          <Text style={styles.userName}>{user?.displayName || 'Motion User'}</Text>
-          <Text style={styles.userEmail}>user@example.com</Text>
-        </View>
-        <Pressable style={styles.editButton}>
-          <Icon name="pencil" size={20} color={colors.primary} />
-        </Pressable>
-      </MotionCard>
+      </TerminalCard>
 
-      {/* Account Settings */}
-      <Text style={styles.sectionTitle}>Account</Text>
-      <MotionCard style={styles.settingsCard}>
-        {accountSettings.map((item, index) => (
-          <View key={item.id}>
-            {renderSettingItem(item)}
-            {index < accountSettings.length - 1 && <View style={styles.divider} />}
-          </View>
-        ))}
-      </MotionCard>
+      {/* CAMERA */}
+      <ConfigSection title="CAMERA">
+        <ConfigRow
+          label="camera_facing"
+          value={trackingConfig.cameraFacing.toUpperCase()}
+          onPress={() =>
+            updateTrackingConfig({
+              cameraFacing: trackingConfig.cameraFacing === 'front' ? 'back' : 'front',
+            })
+          }
+        />
+        <ConfigRow label="model" value={trackingConfig.modelConfig.modelType} onPress={() => router.push('/forge/model' as any)} />
+        <ConfigRow label="confidence" value={trackingConfig.modelConfig.confidenceThreshold.toFixed(2)} onPress={() => router.push('/forge/model' as any)} />
+      </ConfigSection>
 
-      {/* App Settings */}
-      <Text style={styles.sectionTitle}>App</Text>
-      <MotionCard style={styles.settingsCard}>
-        {appSettings.map((item, index) => (
-          <View key={item.id}>
-            {renderSettingItem(item)}
-            {index < appSettings.length - 1 && <View style={styles.divider} />}
-          </View>
-        ))}
-      </MotionCard>
+      {/* NOTIFICATIONS */}
+      <ConfigSection title="NOTIFICATIONS">
+        <ToggleRow label="push_alerts" value={notifications} onChange={setNotifications} />
+        <ToggleRow label="haptic_feedback" value={haptics} onChange={setHaptics} />
+      </ConfigSection>
 
-      {/* Coach Settings */}
-      <Text style={styles.sectionTitle}>AI Coach</Text>
-      <MotionCard style={styles.settingsCard}>
-        {coachSettings.map((item, index) => (
-          <View key={item.id}>
-            {renderSettingItem(item)}
-            {index < coachSettings.length - 1 && <View style={styles.divider} />}
-          </View>
-        ))}
-      </MotionCard>
+      {/* DATA_EXPORT */}
+      <ConfigSection title="DATA_EXPORT">
+        <ConfigRow
+          label="export_csv"
+          value="CSV"
+          onPress={() =>
+            Alert.alert('[EXPORT]', 'Data export will be prepared and emailed.')
+          }
+        />
+        <ConfigRow
+          label="supabase_sync"
+          value="READY"
+        />
+        <ConfigRow
+          label="clear_sessions"
+          isDanger
+          onPress={() =>
+            Alert.alert('[CONFIRM]', 'Delete all session history?', [
+              { text: '> CANCEL', style: 'cancel' },
+              { text: '> DELETE', style: 'destructive', onPress: () => clearSessions() },
+            ])
+          }
+        />
+      </ConfigSection>
 
-      {/* Data & Privacy */}
-      <Text style={styles.sectionTitle}>Data & Privacy</Text>
-      <MotionCard style={styles.settingsCard}>
-        {dataSettings.map((item, index) => (
-          <View key={item.id}>
-            {renderSettingItem(item)}
-            {index < dataSettings.length - 1 && <View style={styles.divider} />}
-          </View>
-        ))}
-      </MotionCard>
+      {/* APPEARANCE */}
+      <ConfigSection title="APPEARANCE">
+        <ToggleRow
+          label="scanline_overlay"
+          value={trackingConfig.showScanlines}
+          onChange={(v) => updateTrackingConfig({ showScanlines: v })}
+        />
+        <ToggleRow
+          label="skeleton_overlay"
+          value={trackingConfig.showSkeleton}
+          onChange={(v) => updateTrackingConfig({ showSkeleton: v })}
+        />
+        <ToggleRow label="cursor_blink" value={cursorBlink} onChange={setCursorBlink} />
+      </ConfigSection>
 
-      {/* Sign Out Button */}
-      <MotionButton
-        label="Sign Out"
-        variant="secondary"
-        onPress={handleLogout}
-        style={styles.signOutButton}
-      />
+      {/* ACCOUNT */}
+      <ConfigSection title="ACCOUNT">
+        <ConfigRow label="units" value={(user?.unitSystem ?? 'metric').toUpperCase()} />
+        <ConfigRow
+          label="reset_onboarding"
+          onPress={() => {
+            setOnboardingComplete(false);
+            Alert.alert('[RESET]', 'Onboarding will show on next launch.');
+          }}
+        />
+        <ConfigRow label="sign_out" isDanger onPress={handleLogout} />
+      </ConfigSection>
 
-      {/* App Version */}
-      <Text style={styles.version}>Motion v1.0.0</Text>
+      <Text style={styles.version}>{'> MOTION/TRACK v1.0.0'}</Text>
     </ScrollView>
   );
 }
@@ -251,105 +195,93 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xxl * 2,
   },
   userCard: {
+    marginBottom: spacing.md,
+  },
+  userRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: spacing.xl,
   },
   userAvatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: colors.primary,
+    width: 48,
+    height: 48,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: colors.terminalGreen,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'rgba(0,255,65,0.08)',
   },
   userAvatarText: {
-    fontSize: 24,
+    fontFamily: 'SpaceMono',
+    fontSize: 20,
+    color: colors.terminalGreen,
     fontWeight: 'bold',
-    color: colors.textPrimary,
   },
   userInfo: {
     flex: 1,
     marginLeft: spacing.md,
   },
   userName: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.textPrimary,
-  },
-  userEmail: {
+    fontFamily: 'SpaceMono',
     fontSize: 14,
-    color: colors.textSecondary,
-    marginTop: 2,
-  },
-  editButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.textSecondary,
-    marginBottom: spacing.sm,
-    marginTop: spacing.sm,
-    textTransform: 'uppercase',
+    color: colors.textPrimary,
     letterSpacing: 1,
   },
-  settingsCard: {
-    paddingVertical: spacing.xs,
+  userStatus: {
+    fontSize: 10,
+    marginTop: 2,
   },
-  settingRow: {
+  editBtn: {
+    padding: spacing.sm,
+  },
+  section: {
+    marginBottom: spacing.md,
+  },
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.terminalBorder,
+    minHeight: 44,
   },
-  settingIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: colors.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.md,
-  },
-  settingIconDanger: {
-    backgroundColor: 'rgba(255, 77, 79, 0.1)',
-  },
-  settingLabel: {
+  rowLabel: {
+    fontFamily: 'SpaceMono',
+    fontSize: 11,
+    color: colors.terminalBlue,
     flex: 1,
-    fontSize: 16,
-    color: colors.textPrimary,
   },
-  settingLabelDanger: {
+  rowValue: {
+    fontFamily: 'SpaceMono',
+    fontSize: 11,
+    color: colors.terminalGreen,
+    marginRight: spacing.sm,
+  },
+  chevron: {
+    fontFamily: 'SpaceMono',
+    fontSize: 16,
+    color: colors.textMuted,
+  },
+  rowRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  toggleValue: {
+    fontFamily: 'SpaceMono',
+    fontSize: 10,
+    letterSpacing: 1,
+  },
+  dangerText: {
     color: colors.danger,
   },
-  settingValueContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  settingValue: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    marginRight: spacing.xs,
-    textTransform: 'capitalize',
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.surface,
-    marginLeft: 52,
-  },
-  signOutButton: {
-    marginTop: spacing.xl,
-  },
   version: {
+    fontFamily: 'SpaceMono',
     textAlign: 'center',
-    fontSize: 12,
+    fontSize: 10,
     color: colors.textMuted,
     marginTop: spacing.lg,
+    letterSpacing: 1,
   },
 });
+

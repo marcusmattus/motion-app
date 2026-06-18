@@ -1,44 +1,51 @@
-// Motion Design System - Dark-First Theme
+// Motion Design System — Terminal-Grade Dark Theme
 export const colors = {
-  // Primary palette
-  primary: '#1E90FF',
-  primaryGreen: '#00FF7F',
-  accent: '#FF6B35',
-  
-  // Backgrounds
-  background: '#111111',
-  card: '#171717',
-  surface: '#1E1E1E',
-  
+  // Primary palette — terminal aesthetic
+  primary: '#00D4FF',        // Scan blue (replaces dodger blue)
+  primaryGreen: '#00FF41',   // Matrix green (replaces mint)
+  accent: '#FFB800',         // Amber warning
+
+  // Backgrounds — ultra-dark panels
+  background: '#0A0A0A',
+  card: '#0F0F0F',
+  surface: '#141414',
+
   // Text
-  textPrimary: '#FFFFFF',
-  textSecondary: '#B8C2CC',
-  textMuted: '#6B7280',
-  
+  textPrimary: '#E0E0E0',
+  textSecondary: '#8A8A8A',
+  textMuted: '#4A4A4A',
+
   // Status
-  success: '#00FF7F',
-  warning: '#FF6B35',
-  danger: '#FF4D4F',
-  
-  // Ring colors (for meter)
-  ringOk: '#00FF7F',
-  ringWarn: '#FF6B35',
-  ringBad: '#FF4D4F',
-  
+  success: '#00FF41',
+  warning: '#FFB800',
+  danger: '#FF2D55',
+
+  // Ring / meter colors
+  ringOk: '#00FF41',
+  ringWarn: '#FFB800',
+  ringBad: '#FF2D55',
+
+  // Terminal specifics
+  terminalBorder: '#2A2A2A',
+  terminalGreen: '#00FF41',
+  terminalBlue: '#00D4FF',
+  terminalAmber: '#FFB800',
+  scanline: 'rgba(0,255,65,0.03)',
+
   // Legacy support
-  charcoal: '#111111',
-  cloud: '#F8F9FA',
-  muted: '#B8C2CC',
+  charcoal: '#0A0A0A',
+  cloud: '#E0E0E0',
+  muted: '#8A8A8A',
 };
 
 export const gradients = {
   energy: {
-    colors: ['#1E90FF', '#00FF7F'],
+    colors: ['#00D4FF', '#00FF41'],
     start: { x: 0, y: 0 },
     end: { x: 1, y: 1 },
   },
   fire: {
-    colors: ['#FF6B35', '#FF4D4F'],
+    colors: ['#FFB800', '#FF2D55'],
     start: { x: 0, y: 0 },
     end: { x: 1, y: 1 },
   },
@@ -65,42 +72,43 @@ export const shadows = {
   elev1: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
+    shadowOpacity: 0.4,
     shadowRadius: 10,
     elevation: 4,
   },
   glow: {
-    shadowColor: '#1E90FF',
+    shadowColor: '#00D4FF',
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.35,
-    shadowRadius: 24,
+    shadowOpacity: 0.4,
+    shadowRadius: 20,
     elevation: 8,
   },
   glowGreen: {
-    shadowColor: '#00FF7F',
+    shadowColor: '#00FF41',
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.35,
-    shadowRadius: 24,
+    shadowOpacity: 0.4,
+    shadowRadius: 20,
     elevation: 8,
   },
 };
 
 export const typography = {
-  headline: 'Montserrat_700Bold',
-  headlineMedium: 'Montserrat_600SemiBold',
-  body: 'Inter_400Regular',
-  bodyMedium: 'Inter_500Medium',
-  bodySemiBold: 'Inter_600SemiBold',
+  headline: 'SpaceMono',
+  headlineMedium: 'SpaceMono',
+  body: 'SpaceGrotesk_400Regular',
+  bodyMedium: 'SpaceGrotesk_500Medium',
+  bodySemiBold: 'SpaceGrotesk_600SemiBold',
+  mono: 'SpaceMono',
   // Fallbacks
-  headlineFallback: 'System',
+  headlineFallback: 'monospace',
   bodyFallback: 'System',
 };
 
 export const tabBarTheme = {
-  backgroundColor: '#111111',
-  activeTintColor: '#00FF7F',
-  inactiveTintColor: '#B8C2CC',
-  borderTopColor: '#1E1E1E',
+  backgroundColor: '#0A0A0A',
+  activeTintColor: '#00FF41',
+  inactiveTintColor: '#4A4A4A',
+  borderTopColor: '#2A2A2A',
 };
 
 export default {
